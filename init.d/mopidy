@@ -1,0 +1,10 @@
+#!/sbin/openrc-run
+
+command="/media/mmcblk0p2/.mopidy/.local/bin/mopidy"
+command_user="mopidy"
+command_background="yes"
+pidfile="/run/$RC_SVCNAME.pid"
+
+depend() {
+    need net
+}

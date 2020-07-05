@@ -90,16 +90,32 @@ Note that directories will depend upon your OS. These instructions are for Alpin
 
 # Switching to operational mode
 
-* As the mopidy user:
-    * `crontab -e` to add a single line:
-    * `@reboot mopidy`
+* Install an init script - scp `init.d/mopidy` to `/etc/init.d/mopidy` (as root)
+* Make the script executable:
+
+  ```
+  chmod +x /etc/init.d/mopidy
+  ```
+* Add this as a service:
+
+  ```
+  rc-update add mopidy default
+  ```
+* Commit the changes to the system:
+
+  ```
+  lbu include /etc/init.d
+  lbu commit -dv
+  ```
+  
+  (Note that the `lbu commit` command only needs to be run once. The `-v` option to `lbu commit` makes it more verbose, so you can confirm that `/etc/init.d/mopidy` is included in the archive.
 * Also, switch the media partition to read-only so that it doesn't matter if the Pi loses power:
     * As root, add `ro` to the options for the partition in `/etc/fstab`
     * Also, `mount -o remount,ro /media/mmcblk0p2`
 * Then, as root:
     * `lbu commit -d`
 
-# Adding new music or album artwork to the Pi
+# Adding new music to the Pi
 
 On the Pi, as root:
 
@@ -120,6 +136,17 @@ On the Pi, as root:
 ```
 mount -o remount,ro /media/mmcblk0p2
 ```
+
+# Adding artwork to the Pi
+
+On the Pi, as root:
+
+```
+mount -o remount,rw /media/mmcblk0p2
+```
+
+The `rsync` rune will not suffice. The .jpg file gets copied, but `mopidy local scan` does not detect the new artwork. The only effective workaround seems to be `dir=$(dirname path/to/new/cover.jpg); touch $dir/*.mp3`.
+
 
 # De-duplicating compilation albums
 
