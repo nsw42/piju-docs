@@ -185,3 +185,16 @@ Instead of the `pip install mopidy-local` (and `pip uninstall mopidy-local` reve
     ```
     rc-service mopidy restart
     ```
+
+# Enabling debug logging
+
+In `~/.config/mopidy/mopidy.conf`, edit the `[logging]` section to specify a config file:
+
+```
+[logging]
+config_file = $XDG_CONFIG_DIR/mopidy/logging.conf
+```
+
+The logging config file needs to contain a load of boilerplate information. See <file:./logging.conf> 
+
+Note that the configuration given generates huge quantities of logging, so should only be used when actually investigating a problem. To switch it off, simply comment out the `config_file` line in `mopidy.conf`.
