@@ -54,16 +54,17 @@ First installed Raspberry Pi OS, but decided to switch to Alpine Linux for its q
     * `apk add python3`
     * `apk add curl`
     * Enable the Community repository: `vi /etc/apk/repositories`, uncomment the community line, `:wq`, `apk update`
-    * `apk add gstreamer gst-plugins-base gstreamer-tools gst-plugins-good gst-plugins-bad`
-        * `gst-plugins-good` enables mp3, `gst-plugins-bad` enables mp4 files
+    * `apk add gstreamer gst-plugins-base gstreamer-tools gst-plugins-good gst-plugins-bad gst-libav`
+        * `gst-plugins-good` enables mp3, `gst-plugins-bad` and `gst-libav` together enable mp4/m4a files
     * `apk add py3-gst`
+    * `apk add faad2`
 * For the next steps, you must be logged in as the mopidy user
     * `curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
     * `python3 get-pip.py --user`
     * Heed the warnings that pip isn't on the path, and create/edit .profile: `export PATH=~/.local/bin:$PATH`  Log out and log back in to ensure that the changes are correct
     * `pip install --user --upgrade mopidy`
-    * `pip install --user --upgrade mopidy-local`
-    * `pip install --user --upgrade mopidy-iris`  # but see below, too
+    * `pip install --user --upgrade mopidy-local`  # but see below, too
+    * `pip install --user --upgrade mopidy-iris`
     * `lbu commit -d`
 * To facilitate future transfers:
     * `apk add rsync`
@@ -151,3 +152,36 @@ The `rsync` rune will not suffice. The .jpg file gets copied, but `mopidy local 
 # De-duplicating compilation albums
 
 mopidy-local distinguishes albums based on their year as well as the name, etc. But the information it gets from gstreamer is only about the tracks, so this goes wrong for compilations: the tracks may span many years, despite definitely being a single release. Option 1: Remove all the date information from the mp3s. Option 2. Fork mopidy-local.  See <https://github.com/nsw42/mopidy-local> for the work in progress.
+
+# Switching to custom mopidy-local
+
+Instead of the `pip install mopidy-local` (and `pip uninstall mopidy-local` reverts it, if necessary), take the following steps:
+
+* As root:
+
+    ```
+    mount -o remount,rw /media/mmcblk0p2
+    ```
+
+* As the mopidy user:
+
+    ```
+    wget https://github.com/nsw42/mopidy-local/archive/master.zip
+    unzip mopidy-local.zip
+    cd mopidy-local-master
+    python3.8 setup.py install --prefix=/media/mmcblk0p2/.mopidy/.local/
+    ```
+
+* At this point, `mopidy --help` will confirm that mopidy-local was installed correctly.
+
+* As the mopidy user:
+
+    ```
+    mopidy local scan --force
+    ```
+
+* As root:
+
+    ```
+    rc-service mopidy restart
+    ```
