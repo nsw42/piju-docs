@@ -109,7 +109,7 @@ Note that directories will depend upon your OS. These instructions are for Alpin
   lbu commit -dv
   ```
   
-  Note that the `lbu commit` command only needs to be run once. The `-v` option to `lbu commit` makes it more verbose, so you can confirm that `/etc/init.d/mopidy` is included in the archive.
+  Note that the `lbu include` command only needs to be run once, even if you subsequently change the init.d script. The `-v` option to `lbu commit` makes it more verbose, so you can confirm that `/etc/init.d/mopidy` is included in the archive.
 * Also, switch the media partition to read-only so that it doesn't matter if the Pi loses power:
     * As root, add `ro` to the options for the partition in `/etc/fstab`
     * Also, `mount -o remount,ro /media/mmcblk0p2`
