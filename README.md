@@ -189,13 +189,19 @@ Instead of the `pip install mopidy-local` (and `pip uninstall mopidy-local` reve
 
 # Enabling debug logging
 
-In `~/.config/mopidy/mopidy.conf`, edit the `[logging]` section to specify a config file:
+The `init.d` script logs stdout and stderr to files on disk. So, simply increase the logging verbosity in `~/.config/mopidy/mopidy.conf`:
 
 ```
 [logging]
-config_file = $XDG_CONFIG_DIR/mopidy/logging.conf
+verbosity = 1
 ```
 
-The logging config file needs to contain a load of boilerplate information. See <file:./logging.conf> 
+(or a higher level if necessary)
 
-Note that the configuration given generates huge quantities of logging, so should only be used when actually investigating a problem. To switch it off, simply comment out the `config_file` line in `mopidy.conf`.
+It can be useful to see HTTP requests, so add a section as follows:
+
+```
+[loglevels]
+mopidy.http.handlers = warning
+tornado.access = info
+```
