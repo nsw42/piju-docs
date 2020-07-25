@@ -92,6 +92,7 @@ Note that directories will depend upon your OS. These instructions are for Alpin
 # Switching to operational mode
 
 * Install an init script - scp `init.d/mopidy` to `/etc/init.d/mopidy` (as root)
+* Note that this contains hard-coded paths for log files, which are specific to my configuration.
 * Make the script executable:
 
   ```
