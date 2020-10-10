@@ -1,0 +1,31 @@
+#!/sbin/openrc-run
+
+command="startx"
+command_user="mopidy"
+command_background="yes"
+pidfile="/run/$RC_SVCNAME.pid"
+logfile="/media/mmcblk0p2/logs/pijuui.log"
+errfile="/media/mmcblk0p2/logs/pijuui.err"
+
+start() {
+        rm -f "${logfile}" "${errfile}"
+	ebegin "Starting pijuui"
+	start-stop-daemon $daemon_args --start \
+		--exec "${command}" \
+                --user "${command_user}" \
+                --make-pidfile \
+		--pidfile "${pidfile}" \
+                --background \
+                --stdout "${logfile}" \
+                --stderr "${errfile}" \
+		-- ${ARGS}
+	eend $? "Failed to start pijuui"
+}
+
+stop() {
+	ebegin "Stopping pijuui"
+	start-stop-daemon --stop --quiet \
+		--pidfile "${pidfile}"
+	eend $? "Failed to stop pijuui"
+}
+

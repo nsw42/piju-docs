@@ -154,7 +154,7 @@ The `rsync` rune will not suffice. The .jpg file gets copied, but `mopidy local 
 
 mopidy-local distinguishes albums based on their year as well as the name, etc. But the information it gets from gstreamer is only about the tracks, so this goes wrong for compilations: the tracks may span many years, despite definitely being a single release. Option 1: Remove all the date information from the mp3s. Option 2. Fork mopidy-local.  See <https://github.com/nsw42/mopidy-local> for the work in progress.
 
-# Switching to custom mopidy-local
+## Switching to custom mopidy-local
 
 Instead of the `pip install mopidy-local` (and `pip uninstall mopidy-local` reverts it, if necessary), take the following steps:
 
@@ -205,3 +205,95 @@ It can be useful to see HTTP requests, so add a section as follows:
 mopidy.http.handlers = warning
 tornado.access = info
 ```
+
+# Adding a physical UI
+
+Plan: install and run the Python utility that displays the now playing, etc, UI. 
+
+## Hardware setup
+Additional hardware needed:
+
+* https://www.okdo.com/p/official-raspberry-pi-7-touch-screen-lcd/
+    * The 7" touchscreen LCD
+* https://thepihut.com/collections/raspberry-pi-screens/products/raspberry-pi-7-touchscreen-display-case-clear?variant=32291995353150
+
+Cable up as per the Okdo instructions and put it in the case.  Add power and the screen shows Alpine Linux.
+
+Following the Okdo instructions left the screen upside down. Adding `lcd_rotate=2` to usercfg.txt (see below) fixes that.
+
+## Install the X environment
+
+As root:
+
+* `setup-xorg-base`
+* `apk add mesa-dri-vc4 mesa-dri-swrast mesa-gbm xf86-video-fbdev xfce4 xfce4-terminal`
+* `mount -o remount,rw /media/mmcblk0p1`
+* Edit /media/mmcblk0p1/usercfg.txt, to add:
+
+    ```
+    dtoverlay=vc4-fkms-v3d
+    gpu_mem=256
+    lcd_rotate=2
+    ```
+
+* Create `/etc/X11/xorg.conf`:
+
+    ```
+    Section "Device"
+      Identifier "default"
+      Driver "fbdev"
+    EndSection
+    ```
+    
+* `lbu commit -d`
+* `reboot`
+
+## Install the piju local UI
+
+* Install dependencies. As root:
+
+    ```
+    apk add py3-gobject3
+    ```
+
+*  Download (or git clone) <https://github.com/nsw42/pijuui>
+*  `pip install -r requirements.txt`
+
+## Make the UI start automatically
+
+Similar to starting mopidy automatically:
+
+* Install the init script - scp `init.d/pijuui` to `/etc/init.d/pijuui` (as root)
+    * TODO: Is there an off-the-shelf script for this? After trying various options, it just does `startx`.
+* Note that this contains hard-coded paths for log files, which are specific to my configuration.
+* Write a `~mopidy/.xinitrc` file:
+
+  ```
+  #! /bin/sh
+
+  startxfce4 &
+  sleep 10
+  exec $(dirname $0)/pijuui/run.sh
+  ```
+  
+  TODO: This runs `startxfce4` because the python application wasn't filling the screen otherwise. It shouldn't be necessary to run the window manager, though.
+* Make the script executable:
+
+  ```
+  chmod +x /etc/init.d/pijuui
+  ```
+* Add this as a service:
+
+  ```
+  rc-update add pijuui default
+  ```
+* Commit the changes to the system:
+
+  ```
+  lbu include /etc/init.d
+  lbu commit -dv
+  ```
+  
+  Note that the `lbu include` command only needs to be run once, even if you subsequently change the init.d script. The `-v` option to `lbu commit` makes it more verbose, so you can confirm that `/etc/init.d/pijuui` is included in the archive.
+
+* Reboot
