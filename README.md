@@ -16,9 +16,10 @@ I'd previously used <https://mopidy.com> but found that the API didn't really su
 
 1. Intall the OS: See (for now) <https://github.com/nsw42/piju-server/blob/main/doc/deploy.md>
 1. Install the piju server. See <https://github.com/nsw42/piju-server/blob/main/doc/deploy.md>
-1. Install the touch-screen UI software. See <https://github.com/nsw42/pijuui/blob/main/README.md>
-1. Install the web ui. See <https://github.com/nsw42/pijuwebui/blob/main/doc/deploy.md>
+1. Install the touch-screen UI software. See <https://github.com/nsw42/piju-touchscreen/blob/main/README.md>
+1. Install the web ui. See <https://github.com/nsw42/piju-webui/blob/main/doc/deploy.md>
 1. If you're not interested in the web ui, you might want to install lighttpd to download music files. See [lighttpd_download.md](lighttpd_download.md)
+1. If you're planning to play tracks from YouTube, you'll need to install yt-dlp and a few other things. See <https://github.com/nsw42/piju-webui/blob/main/doc/deploy.md>
 
 ## Troubleshooting
 
