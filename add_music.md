@@ -1,9 +1,13 @@
 # Adding music to a PiJu server
 
 Before you can add music to the PiJu system, you need to create a destination
-directory for it first. See Step 1, below. Once that's done, you have two options
-for adding music to PiJu: either getting the Pi to pull music from a source, or
-to push music onto the Pi. Either way, you need to
+directory for it first. See Step 1, below. Once that's done, you have two
+options for adding music to PiJu: either getting the Pi to pull music from a
+source, or to push music onto the Pi. After adding music, if you've already got
+piju-server running, you need to tell the server to scan the music directory
+and update its database. If you are adding music before installing piju-server,
+the installation documentation for piju-server contains a reminder. See
+<https://github.com/nsw42/piju-server/blob/main/doc/update_database.md>
 
 ## Step 1: Create a destination directory
 
