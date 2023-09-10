@@ -75,6 +75,18 @@ Logged in as root:
     EndSection
     ```
 
+### Installing prerequisites for showing now-playing information for radio stations
+
+If you're planning to use piju to play radio stations, and want to include
+now-playing artist and track information in the web ui or the touchscreen UI,
+you'll need to install another piece of software:
+
+Logged in as root:
+
+```sh
+apk add jq
+```
+
 ### Installing prerequisites for playing tracks from YouTube
 
 If you're planning to play tracks from YouTube, you'll need to install a couple
