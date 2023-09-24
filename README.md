@@ -3,11 +3,11 @@
 ## About this project
 
 This is a Raspberry Pi powered jukebox. Background: I had a mini hifi system,
-with speakers, etc, in the kitchen. In principle, I wanted to switch our old CD
-collection to digital, but having tried several systems, I'd not found a UI I
-liked. So, the idea is to use a Raspberry Pi plugged into aux in of existing
-hifi, with an iPad to control it, and a 7" touchscreen display to the Pi for
-simple controls too.
+with speakers, etc, in the kitchen. In principle, I wanted to switch our old
+CD collection to digital, but having tried several systems, I'd not found a UI
+I liked. So, the idea is to use a Raspberry Pi plugged into an existing hifi,
+with an iPad to control it, and a 7" touchscreen display to the Pi for simple
+controls too.
 
 I'd previously used <https://mopidy.com> but found that the API didn't really
 suit my project's needs. After adding more and more bespoke extensions, I
