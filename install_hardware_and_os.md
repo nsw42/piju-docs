@@ -7,9 +7,21 @@
 * Insert the SD card (via adapter) into MBP
 * Figure out disk id (for me, it was `disk4`)
 * `diskutil partitionDisk disk4 2 MBR "MS-DOS FAT32" ALPINE 1GB "MS-DOS FAT32" LINUX R`
-* Download Raspberry Pi Alpine Linux from
-  <https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/armhf/alpine-rpi-3.15.0-armhf.tar.gz>
-* `cd /Volumes/ALPINE; tar xvf ~/Downloads/alpine-rpi-3.15.0-armhf.tar.gz`
+* Download Raspberry Pi Alpine Linux and its checksum from
+  <http://dl-cdn.alpinelinux.org/alpine/v3.18/releases/armhf/alpine-rpi-3.18.3-armhf.tar.gz>
+  and
+  <http://dl-cdn.alpinelinux.org/alpine/v3.18/releases/armhf/alpine-rpi-3.18.3-armhf.tar.gz.sha256>
+  (Using a mirror might result in better download speeds - see <https://mirrors.alpinelinux.org>)
+* Check the integrity of the download:
+
+  ```sh
+  cd ~/Downloads
+  sha256sum -c alpine-rpi-3.18.3-armhf.tar.gz.sha256
+  ```
+
+* `cd /Volumes/ALPINE`
+* If you're updating a previous installation, delete _most_ of the files/directories in /Volumes/ALPINE. Keep `cmdline.txt`, `config.txt`, `usercfg.txt`.
+* `tar xvf ~/Downloads/alpine-rpi-3.18.3-armhf.tar.gz`
 * Create usercfg.txt consisting of:
 
     ```text
@@ -38,9 +50,9 @@ Logged in as root:
 apk add mpg123
 apk add alsa-utils
 addgroup root audio
-apk add py3-pillow
 apk add git
 apk add python3
+apk add py3-pillow  # this might only work after later steps, to
 wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
 python3 get-pip.py
 # If it's something you'll use:
@@ -108,5 +120,7 @@ Logged in as root:
 ```sh
 adduser piju
 addgroup piju wheel  # for sudo
-addgroup piju audio,tty,input,video  # input and video needed for X, i.e. for the touchscreen UI
+for group in audio tty input video; do
+  addgroup piju $group  # input and video needed for X, i.e. for the touchscreen UI
+done
 ```
