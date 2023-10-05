@@ -32,31 +32,46 @@ eventually bit the bullet and replaced the entire backend.
 1. If you're not interested in the web ui, you might want to install lighttpd
    to download music files. See [lighttpd_download.md](lighttpd_download.md)
 
-## Troubleshooting
+## Troubleshooting: No sound through audio jack
 
-### No sound through audio jack
+If you find you are not getting audio through the audio jack, it's worth
+checking that the right kernel modules are being loaded. Run
+`lsmod | grep snd` and check that `snd_bcm2835` is included in the output.
 
-Not sure what caused this: an OS update? adding additional overlays? But `lsmod
-| grep snd` showed that `snd_bcm2835` was not being loaded. A simple `modprobe
-snd-bcm2835` fixes it temporarily, but obvs that shouldn't be necessary.
+If it's not, add `snd_bcm2835` to `/etc/modules` and reboot.
 
-Adding `snd_bcm2835` to `/etc/modules` ensures no `modprobe` is necessary.
+I also installed all of the ALSA packages during troubleshooting, which
+may turn out to be part of the solution.
 
-I also installed all of the ALSA packages along the way. Not sure if they were
-necessary, or just useful for troubleshooting.
-
-Once I had sound, audio output was very quiet. Added a line to `run.sh` that
-uses the `amixer` command to set audio output to 100%.
+Once I had sound, audio output was very quiet, so I added a line to my local
+copy of `run.sh` that uses the `amixer` command to set audio output to 100%.
 
 ## Better quality audio
 
-Use one of the hi-fi DACs ... (link)
+If you are using one of the audio HATs for the Raspberry Pi (eg I have a
+[HiFiBerry DAC2 Pro](https://www.hifiberry.com/shop/boards/hifiberry-dac2-pro))
+then configure ALSA to make that your default:
+
+Run the command `aplay -l`, and identify which card is the right one. Eg, with
+the HiFiBerry card, there is a line that starts 'card 1: sndrpihifiberry ...'
+
+Then, as root, create or edit the file `/etc/asound.conf`, so that it looks
+something like this (with the appropriate card number submitted):
+
+```text
+pcm.!default {
+  type hw card 1
+}
+ctl.!default {
+  type hw card 1
+}
+```
 
 ## Additional systems
 
 The PiJu system supports remote sytems, which act as a caching replica of the
 main system. Decide which Pi you want to be the main unit, as this is the one
-where you will add new music. The secondary units have exactly the  same
+where you will add new music. The secondary units have exactly the same
 hardware configuration as the main server, and just fetch music files from the
 primary Pi as needed. Installation steps for the secondary systems are similar
 to that of the main system:
