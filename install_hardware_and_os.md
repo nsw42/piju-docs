@@ -68,6 +68,7 @@ Logged in as root:
 * `setup-xorg-base`
 * `apk add mesa-dri-vc4 mesa-dri-swrast mesa-gbm xf86-video-fbdev xfce4 xfce4-terminal`
 * `apk add xset py3-gobject3`
+* `apk add webp-pixbuf-loader`
 * Edit /media/mmcblk0p1/usercfg.txt, to add:
 
     ```text
