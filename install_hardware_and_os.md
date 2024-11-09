@@ -39,8 +39,20 @@
 * Basically, follow <https://wiki.alpinelinux.org/wiki/Classic_install_or_sys_mode_on_Raspberry_Pi#Installation>
     * Format the second partition: `apk add e2fsprogs; mkfs.ext4 /dev/mmcblk0p2`
     * Run `setup-alpine` and work through the setup
-    * Then do the various faff to get 'sys' mode working, which avoids the need to `lbu commit -d` all the time
-* Check for OS updates: `apk update; apk  upgrade`
+        * Don't create a user yet
+    * Then do the various faff to get 'sys' mode working, which avoids the need to `lbu commit -d` all the time:
+
+      ```sh
+      mount /dev/mmcblk0p2 /mnt
+      mkdir /mnt/boot
+      mount /dev/mmcblk0p1 /mnt/boot
+      mkdir /mnt/boot_archive
+      mv /mnt/boot/* /mnt/boot_archive/
+      setup-disk -m sys /mnt
+      ```
+
+    * Reboot, to check it still works...
+* Check for OS updates: `apk update; apk upgrade`
 
 ### Installing prerequisites for the music player
 
@@ -48,15 +60,17 @@ Logged in as root:
 
 ```sh
 apk add mpg123
+apk add mpv
 apk add alsa-utils
 addgroup root audio
 apk add git
 apk add python3
-apk add py3-pillow  # this might only work after later steps, to
-wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py
-python3 get-pip.py
-# If it's something you'll use:
-apk add rsync
+apk add rsync  # (if it's something you'll use)
+sed -i '/community/ s/^#//' /etc/apk/repositories
+apk add py3-pillow
+apk add py3-pip
+apk add sudo
+apk add logrotate
 ```
 
 (Attempts to `pip install` Pillow results in it trying to build from source)
@@ -65,10 +79,14 @@ apk add rsync
 
 Logged in as root:
 
-* `setup-xorg-base`
-* `apk add mesa-dri-vc4 mesa-dri-swrast mesa-gbm xf86-video-fbdev xfce4 xfce4-terminal`
-* `apk add xset py3-gobject3`
-* `apk add webp-pixbuf-loader`
+```sh
+setup-xorg-base
+apk add xf86-video-fbdev xfce4 xfce4-terminal xset webp-pixbuf-loader
+# no longer available mesa-dri-vc4 mesa-dri-swrast mesa-gbm
+# If running the Python touchscreen UI:
+apk add py3-gobject3
+```
+
 * Edit /media/mmcblk0p1/usercfg.txt, to add:
 
     ```text
@@ -97,7 +115,7 @@ you'll need to install another piece of software:
 Logged in as root:
 
 ```sh
-apk add jq
+apk add jq ffplay
 ```
 
 ### Installing prerequisites for playing tracks from YouTube
